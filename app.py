@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import joblib
 import os
-import base64
 import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.datasets import load_iris
@@ -16,86 +15,87 @@ st.set_page_config(
 )
 
 # ================= CSS & TYPOGRAPHY =================
-def load_css(bg_image_file):
-    encoded = ""
-    if os.path.exists(bg_image_file):
-        with open(bg_image_file, "rb") as f:
-            data = f.read()
-        encoded = base64.b64encode(data).decode()
-    
-    st.markdown(f"""
+def load_css():
+    st.markdown("""
     <style>
     /* 1. Google Fonts: Poppins */
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-    html, body, [class*="css"] {{
+    html, body, [class*="css"] {
         font-family: 'Poppins', sans-serif !important;
-    }}
+    }
 
-    /* 2. Background and App Container Setup */
-    .stApp {{
-        background-image: url("data:image/jpg;base64,{encoded}");
-        background-size: cover;
-        background-position: center;
+    /* 2. Pure CSS Gradient Background (Replaces Image) */
+    .stApp {
+        background: linear-gradient(135deg, #1e1029 0%, #050505 100%);
+        background-size: 200% 200%;
+        animation: gradientShift 15s ease infinite;
         background-attachment: fixed;
-    }}
+    }
 
-    [data-testid="stAppViewBlockContainer"] {{
-        background: rgba(0, 0, 0, 0.50);
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* 3. Glass Container */
+    [data-testid="stAppViewBlockContainer"] {
+        background: rgba(30, 20, 45, 0.65); /* Adjusted for the new gradient */
         padding: 3rem !important;
         border-radius: 25px;
         backdrop-filter: blur(25px);
         -webkit-backdrop-filter: blur(25px);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         margin-top: 3rem;
         margin-bottom: 3rem;
         max-width: 950px;
-    }}
+    }
 
-    /* 3. Typography Overrides */
-    h1, h2, h3, h4, p, label, .stMarkdown, span {{
+    /* 4. Typography Overrides */
+    h1, h2, h3, h4, p, label, .stMarkdown, span {
         color: #f3e8ff !important; /* Bright soft purple for general text */
-    }}
+    }
 
     /* Tabs Styling */
-    .stTabs [data-baseweb="tab-list"] {{
+    .stTabs [data-baseweb="tab-list"] {
         gap: 24px;
-    }}
-    .stTabs [data-baseweb="tab"] {{
+    }
+    .stTabs [data-baseweb="tab"] {
         height: 50px;
         white-space: pre-wrap;
-        background-color: rgba(255, 255, 255, 0.08);
+        background-color: rgba(255, 255, 255, 0.05);
         border-radius: 10px 10px 0px 0px;
         padding-top: 10px;
         padding-bottom: 10px;
         color: #e9d5ff !important;
         transition: 0.3s;
-    }}
-    .stTabs [aria-selected="true"] {{
-        background-color: rgba(255, 255, 255, 0.2);
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: rgba(255, 255, 255, 0.15);
         font-weight: 600;
-    }}
+    }
 
-    /* 4. Input Fields */
-    div[data-baseweb="input"] {{
-        background: rgba(255,255,255,0.06) !important;
+    /* 5. Input Fields */
+    div[data-baseweb="input"] {
+        background: rgba(255,255,255,0.04) !important;
         border-radius: 12px !important;
         border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
-    }}
-    div[data-baseweb="input"]:hover {{
-        background: rgba(255,255,255,0.12) !important;
+    }
+    div[data-baseweb="input"]:hover {
+        background: rgba(255,255,255,0.1) !important;
         border: 1px solid rgba(255, 105, 180, 0.5);
         transform: translateY(-2px);
-    }}
-    input {{
+    }
+    input {
         color: #ffffff !important;
         font-weight: 500;
-    }}
+    }
 
-    /* 5. Button */
-    .stButton>button {{
+    /* 6. Button */
+    .stButton>button {
         width: 100%;
         height: 55px;
         border-radius: 15px;
@@ -106,20 +106,20 @@ def load_css(bg_image_file):
         font-weight: 600;
         font-size: 16px;
         letter-spacing: 1px;
-    }}
-    .stButton>button:hover {{
+    }
+    .stButton>button:hover {
         background: linear-gradient(135deg, rgba(255,105,180,0.9) 0%, rgba(148,0,211,0.9) 100%);
         transform: translateY(-3px) scale(1.02);
         box-shadow: 0 10px 20px rgba(255, 105, 180, 0.4);
-    }}
+    }
 
-    /* 6. Animations */
-    @keyframes float {{
-        0% {{ transform: translateY(0px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }}
-        50% {{ transform: translateY(-10px); box-shadow: 0 15px 25px rgba(255,105,180,0.3); }}
-        100% {{ transform: translateY(0px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }}
-    }}
-    .floating-card {{
+    /* 7. Animations */
+    @keyframes float {
+        0% { transform: translateY(0px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        50% { transform: translateY(-10px); box-shadow: 0 15px 25px rgba(255,105,180,0.3); }
+        100% { transform: translateY(0px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    }
+    .floating-card {
         animation: float 4s ease-in-out infinite;
         background: rgba(20, 20, 20, 0.7);
         padding: 30px;
@@ -128,8 +128,8 @@ def load_css(bg_image_file):
         border: 1px solid rgba(255,105,180,0.5);
         margin-top: 20px;
         margin-bottom: 20px;
-    }}
-    .result-text {{
+    }
+    .result-text {
         color: #ff4fa3;
         font-size: 2.8rem;
         font-weight: 800;
@@ -137,11 +137,11 @@ def load_css(bg_image_file):
         text-transform: uppercase;
         letter-spacing: 2px;
         text-shadow: 0px 0px 10px rgba(255, 79, 163, 0.4);
-    }}
+    }
     </style>
     """, unsafe_allow_html=True)
 
-load_css("bg.jpg")
+load_css()
 
 # ================= DATA SETUP & AUTO-TRAIN =================
 @st.cache_data
@@ -177,7 +177,6 @@ model = joblib.load("iris_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
 # ================= UI HEADER =================
-# INLINE BRINJAL STYLE (Un-ignorable by the browser)
 brinjal_style = "color: #4A0E4E !important; font-weight: 700 !important; text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.95), 0px 0px 3px rgba(255, 255, 255, 0.6) !important;"
 
 st.markdown(f"<h1 style='{brinjal_style} text-align: center; font-size: 2.8rem; margin-bottom: 0.5rem;'>🌸 Iris AI Classification Dashboard</h1>", unsafe_allow_html=True)
