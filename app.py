@@ -55,27 +55,7 @@ def load_css(bg_image_file):
 
     /* 3. Typography Overrides */
     h1, h2, h3, h4, p, label, .stMarkdown, span {{
-        color: #f3e8ff !important; /* Bright soft purple for general text to maintain contrast */
-    }}
-    
-    /* 🌟 THE BRINJAL PURPLE TEXT CLASS WITH GLOW 🌟 */
-    .brinjal-text {{
-        color: #4A0E4E !important; /* Deep Dark Brinjal / Eggplant Purple */
-        font-weight: 700 !important;
-        text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.95), 0px 0px 3px rgba(255, 255, 255, 0.6) !important; 
-    }}
-
-    .main-title {{
-        letter-spacing: 1px;
-        text-align: center;
-        margin-bottom: 0.5rem;
-        font-size: 2.8rem !important;
-    }}
-    
-    .subtitle {{
-        text-align: center;
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
+        color: #f3e8ff !important; /* Bright soft purple for general text */
     }}
 
     /* Tabs Styling */
@@ -197,8 +177,11 @@ model = joblib.load("iris_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
 # ================= UI HEADER =================
-st.markdown("<h1 class='main-title brinjal-text'>🌸 Iris AI Classification Dashboard</h1>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle brinjal-text'>Intelligent botanical classification through an elegant, real-time glass interface</p>", unsafe_allow_html=True)
+# INLINE BRINJAL STYLE (Un-ignorable by the browser)
+brinjal_style = "color: #4A0E4E !important; font-weight: 700 !important; text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.95), 0px 0px 3px rgba(255, 255, 255, 0.6) !important;"
+
+st.markdown(f"<h1 style='{brinjal_style} text-align: center; font-size: 2.8rem; margin-bottom: 0.5rem;'>🌸 Iris AI Classification Dashboard</h1>", unsafe_allow_html=True)
+st.markdown(f"<p style='{brinjal_style} text-align: center; font-size: 1.2rem; margin-bottom: 2rem;'>Intelligent botanical classification through an elegant, real-time glass interface</p>", unsafe_allow_html=True)
 
 # ================= TABS NAVIGATION =================
 tab1, tab2, tab3 = st.tabs(["🔮 Prediction Mode", "📊 Real Dataset Viz", "🎯 Confusion Matrix"])
@@ -208,12 +191,12 @@ with tab1:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("<h3 style='color: #f3e8ff; text-align: center;'>🌿 Sepal Features</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='{brinjal_style} text-align: center;'>🌿 Sepal Features</h3>", unsafe_allow_html=True)
         sepal_length = st.number_input("Length (cm)", value=5.8, step=0.1, key="sl")
         sepal_width  = st.number_input("Width (cm)", value=3.0, step=0.1, key="sw")
 
     with col2:
-        st.markdown("<h3 style='color: #f3e8ff; text-align: center;'>🌸 Petal Features</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='{brinjal_style} text-align: center;'>🌸 Petal Features</h3>", unsafe_allow_html=True)
         petal_length = st.number_input("Length (cm)", value=4.0, step=0.1, key="pl")
         petal_width  = st.number_input("Width (cm)", value=1.2, step=0.1, key="pw")
 
@@ -226,7 +209,7 @@ with tab1:
 
         st.markdown(f"""
         <div class="floating-card">
-            <h3 style="margin-bottom: 5px; color: #f3e8ff;">Prediction Result</h3>
+            <h3 style="{brinjal_style} margin-bottom: 5px;">Prediction Result</h3>
             <p class="result-text">{prediction}</p>
         </div>
         """, unsafe_allow_html=True)
@@ -235,19 +218,17 @@ with tab1:
             prob = model.predict_proba(input_scaled)[0]
             classes = model.classes_
 
-            st.markdown("<h3 class='brinjal-text' style='text-align: center; margin-top: 1.5rem;'>📊 Confidence Rings</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h3 style='{brinjal_style} text-align: center; margin-top: 1.5rem;'>📊 Confidence Rings</h3>", unsafe_allow_html=True)
             
             df_polar = pd.DataFrame({"Confidence": prob * 100, "Class": classes})
             
-            # --- UPDATED: Highly Visible Black & Blue Configuration ---
             fig_polar = px.bar_polar(
                 df_polar, r="Confidence", theta="Class",
                 color="Class", 
-                color_discrete_sequence=["#00FFFF", "#007AFF", "#001F3F"], # Neon Cyan, Vibrant Blue, Midnight/Black-Blue
+                color_discrete_sequence=["#00FFFF", "#007AFF", "#001F3F"],
                 template="plotly_dark"
             )
             
-            # Add a pure black border around the rings to enforce the theme and increase visibility
             fig_polar.update_traces(
                 marker=dict(line=dict(color="#000000", width=2))
             )
@@ -268,7 +249,7 @@ with tab1:
 
 # ================= TAB 2: DATASET VISUALIZATION =================
 with tab2:
-    st.markdown("<h3 class='brinjal-text' style='margin-bottom: 1rem;'>📈 Sepal vs Petal Distribution</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='{brinjal_style} margin-bottom: 1rem;'>📈 Sepal vs Petal Distribution</h3>", unsafe_allow_html=True)
     
     fig_scatter = px.scatter(
         df_iris, x="Sepal Length", y="Sepal Width", color="Species", 
@@ -286,7 +267,7 @@ with tab2:
 
 # ================= TAB 3: CONFUSION MATRIX =================
 with tab3:
-    st.markdown("<h3 class='brinjal-text'>🎯 Model Accuracy Assessment</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='{brinjal_style}'>🎯 Model Accuracy Assessment</h3>", unsafe_allow_html=True)
     st.write("Simulated model performance mapping (Actual vs Predicted classifications).")
     
     z_matrix = [[49, 1, 0], [0, 48, 2], [0, 3, 47]]
