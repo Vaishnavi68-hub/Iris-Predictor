@@ -7,14 +7,14 @@ import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.datasets import load_iris
 
-# ================= PAGE CONFIG =================
+
 st.set_page_config(
     page_title="Iris AI Dashboard",
     page_icon="🌸",
     layout="wide"
 )
 
-# ================= CSS & TYPOGRAPHY =================
+
 def load_css():
     st.markdown("""
     <style>
@@ -143,7 +143,7 @@ def load_css():
 
 load_css()
 
-# ================= DATA SETUP & AUTO-TRAIN =================
+
 @st.cache_data
 def load_real_data():
     iris = load_iris()
@@ -176,16 +176,14 @@ if not os.path.exists("iris_model.pkl") or not os.path.exists("scaler.pkl"):
 model = joblib.load("iris_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-# ================= UI HEADER =================
+
 brinjal_style = "color: #4A0E4E !important; font-weight: 700 !important; text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.95), 0px 0px 3px rgba(255, 255, 255, 0.6) !important;"
 
 st.markdown(f"<h1 style='{brinjal_style} text-align: center; font-size: 2.8rem; margin-bottom: 0.5rem;'>🌸 Iris AI Classification Dashboard</h1>", unsafe_allow_html=True)
 st.markdown(f"<p style='{brinjal_style} text-align: center; font-size: 1.2rem; margin-bottom: 2rem;'>Intelligent botanical classification through an elegant, real-time glass interface</p>", unsafe_allow_html=True)
 
-# ================= TABS NAVIGATION =================
 tab1, tab2, tab3 = st.tabs(["🔮 Prediction Mode", "📊 Real Dataset Viz", "🎯 Confusion Matrix"])
 
-# ================= TAB 1: PREDICTION =================
 with tab1:
     col1, col2 = st.columns(2)
 
@@ -246,7 +244,6 @@ with tab1:
             
             st.plotly_chart(fig_polar, use_container_width=True, config={'displayModeBar': False})
 
-# ================= TAB 2: DATASET VISUALIZATION =================
 with tab2:
     st.markdown(f"<h3 style='{brinjal_style} margin-bottom: 1rem;'>📈 Sepal vs Petal Distribution</h3>", unsafe_allow_html=True)
     
@@ -264,7 +261,6 @@ with tab2:
     )
     st.plotly_chart(fig_scatter, use_container_width=True)
 
-# ================= TAB 3: CONFUSION MATRIX =================
 with tab3:
     st.markdown(f"<h3 style='{brinjal_style}'>🎯 Model Accuracy Assessment</h3>", unsafe_allow_html=True)
     st.write("Simulated model performance mapping (Actual vs Predicted classifications).")
